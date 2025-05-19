@@ -1,14 +1,12 @@
 package com.example.user_management.service;
 
-
-
-import com.example.user_management.dto.UserDTO;
-//import javax.ws.rs.core.Response;
+import com.example.user_management.dto.UserCreateDTO;
+import com.example.user_management.enums.Role;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.admin.client.resource.*;
+import org.keycloak.representations.idm.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,7 @@ public class KeycloakService {
     @Value("${keycloak.realm}")
     private String realm;
 
-    public Response registerUser(UserDTO userDTO) {
+    public Response registerUser(UserCreateDTO userDTO) {
         CredentialRepresentation credentials = new CredentialRepresentation();
         credentials.setTemporary(false);
         credentials.setType(CredentialRepresentation.PASSWORD);
@@ -37,6 +35,38 @@ public class KeycloakService {
         user.setCredentials(Collections.singletonList(credentials));
         user.setEnabled(true);
 
-        return keycloak.realm(realm).users().create(user);
+        // Create the user
+        UsersResource usersResource = keycloak.realm(realm).users();
+        Response response = usersResource.create(user);
+
+        if (response.getStatus() == 201 && userDTO.getRole() != null) {
+            String userId = extractUserIdFromLocationHeader(response);
+            assignRealmRole(userId, userDTO.getRole());
+        }
+
+        return response;
+    }
+
+    private void assignRealmRole(String userId, Role roleName) {
+        RealmResource realmResource = keycloak.realm(realm);
+
+        // Check if role exists
+        RoleRepresentation role;
+        try {
+            role = realmResource.roles().get(String.valueOf(roleName)).toRepresentation();
+        } catch (Exception e) {
+            throw new RuntimeException("Role '" + roleName + "' does not exist in Keycloak.");
+        }
+
+        UserResource userResource = realmResource.users().get(userId);
+        userResource.roles().realmLevel().add(Collections.singletonList(role));
+    }
+
+    private String extractUserIdFromLocationHeader(Response response) {
+        String location = response.getHeaderString("Location");
+        if (location == null) {
+            throw new RuntimeException("Missing 'Location' header from Keycloak response.");
+        }
+        return location.replaceAll(".*/([^/]+)$", "$1");
     }
 }

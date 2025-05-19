@@ -1,6 +1,7 @@
 package com.example.user_management.mapper;
 
-import com.example.user_management.dto.UserDTO;
+import com.example.user_management.dto.UserCreateDTO;
+import com.example.user_management.dto.UserResponseDTO;
 import com.example.user_management.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -13,59 +14,42 @@ public class UserMapper {
         this.kycVerificationMapper = kycVerificationMapper;
     }
 
-    // Convert User entity to UserDTO
-    public UserDTO toUserDTO(User user) {
-        if (user == null) {
-            return null;
-        }
-
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setFirstname(user.getFirstname());
-        userDTO.setLastname(user.getLastname());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setAccountLocked(user.isAccountLocked());
-        userDTO.setEnabled(user.isEnabled());
-        userDTO.setCreatedDate(user.getCreatedDate());
-
-        // Map KYCVerification to KYCVerificationDTO
-        if (user.getKyc() != null) {
-            userDTO.setKyc(kycVerificationMapper.toKYCVerificationDTO(user.getKyc()));
-        }
-
-        // Assuming that password is stored separately and not part of this mapping
-        // If the password should be mapped, add userDTO.setPassword(user.getPassword()) here
-
-        return userDTO;
-    }
-
-    // Convert UserDTO to User entity (if needed for saving back to DB)
-    public User toUser(UserDTO userDTO) {
-        if (userDTO == null) {
-            return null;
-        }
+    public User toUser(UserCreateDTO dto) {
+        if (dto == null) return null;
 
         User user = new User();
-        user.setId(userDTO.getId());
-        user.setFirstname(userDTO.getFirstname());
-        user.setLastname(userDTO.getLastname());
-        user.setEmail(userDTO.getEmail());
-        user.setAccountLocked(userDTO.isAccountLocked());
-        user.setEnabled(userDTO.isEnabled());
-        user.setCreatedDate(userDTO.getCreatedDate());
+        user.setFirstname(dto.getFirstname());
+        user.setLastname(dto.getLastname());
+        user.setEmail(dto.getEmail());
+        user.setAccountLocked(dto.isAccountLocked());
+        user.setEnabled(dto.isEnabled());
+        user.setCreatedDate(dto.getCreatedDate());
+        user.setDateOfBirth(dto.getDateOfBirth());
 
-        // Map KYCVerificationDTO to KYCVerification
-        if (userDTO.getKyc() != null) {
-            user.setKyc(kycVerificationMapper.toKYCVerification(userDTO.getKyc()));
-        }
-
-        // Handle password mapping here if it's part of the entity
-        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
-            // Assuming you want to store password in the entity (or do something with it)
-            // Here you can set the password into the user entity
-            // user.setPassword(userDTO.getPassword());
+        if (dto.getKyc() != null) {
+            user.setKyc(kycVerificationMapper.toKYCVerification(dto.getKyc()));
         }
 
         return user;
+    }
+
+    public UserResponseDTO toUserResponseDTO(User user) {
+        if (user == null) return null;
+
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getId());
+        dto.setFirstname(user.getFirstname());
+        dto.setLastname(user.getLastname());
+        dto.setEmail(user.getEmail());
+        dto.setAccountLocked(user.isAccountLocked());
+        dto.setEnabled(user.isEnabled());
+        dto.setCreatedDate(user.getCreatedDate());
+        dto.setDateOfBirth(user.getDateOfBirth());
+
+        if (user.getKyc() != null) {
+            dto.setKyc(kycVerificationMapper.toKYCVerificationDTO(user.getKyc()));
+        }
+
+        return dto;
     }
 }

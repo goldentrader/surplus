@@ -2,8 +2,9 @@ package com.example.user_management.enums;
 
 
 public enum Role {
+    USER,
     ADMIN,
-    BUYER,
     SELLER,
+    BUYER,
     NGO
 }

@@ -27,6 +27,7 @@ public class User {
     private String lastname;
     private LocalDate dateOfBirth;
     private String email;
+    private String username;
 
     private boolean accountLocked;
     private boolean enabled;

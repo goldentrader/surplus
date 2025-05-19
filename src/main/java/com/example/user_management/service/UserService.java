@@ -1,31 +1,33 @@
 package com.example.user_management.service;
 
-import com.example.user_management.dto.UserDTO;
+import com.example.user_management.dto.UserCreateDTO;
 import com.example.user_management.entity.User;
-import com.example.user_management.mapper.UserMapper;
+import com.example.user_management.enums.Role;
 import com.example.user_management.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
-    @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
+    public void saveUserToMongo(UserCreateDTO dto) {
+        User user = User.builder()
+                .id(dto.getId())
+                .firstname(dto.getFirstname())
+                .lastname(dto.getLastname())
+                .email(dto.getEmail())
+                .username(dto.getUsername())
+                .enabled(dto.isEnabled())
+                .accountLocked(dto.isAccountLocked())
+                .createdDate(dto.getCreatedDate() != null ? dto.getCreatedDate() : LocalDateTime.now())
+                .role(dto.getRole() != null ? dto.getRole() : Role.USER) // default role if null
+                .build();
 
-    @Transactional
-    public User registerUser(UserDTO userDTO) {
-        // Map UserDTO to User entity, including password
-        User user = userMapper.toUser(userDTO);
-
-        // Save user to MongoDB (assuming password handling happens in the service or repo layer)
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 }
