@@ -62,7 +62,7 @@ public class KeycloakService {
         userResource.roles().realmLevel().add(Collections.singletonList(role));
     }
 
-    private String extractUserIdFromLocationHeader(Response response) {
+    public String extractUserIdFromLocationHeader(Response response) {
         String location = response.getHeaderString("Location");
         if (location == null) {
             throw new RuntimeException("Missing 'Location' header from Keycloak response.");

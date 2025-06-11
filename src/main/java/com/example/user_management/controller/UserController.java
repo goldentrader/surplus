@@ -19,7 +19,6 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserCreateDTO userCreateDTO) {
-        // Step 1: Register in Keycloak
         Response kcResponse = keycloakService.registerUser(userCreateDTO);
 
         if (kcResponse.getStatus() != 201) {
@@ -28,9 +27,10 @@ public class UserController {
                     .body("Keycloak registration failed: " + kcResponse.getStatusInfo());
         }
 
-        // Step 2: Register in MongoDB
-        userService.saveUserToMongo(userCreateDTO);
+        String userId = keycloakService.extractUserIdFromLocationHeader(kcResponse);
+        userService.saveUserToMongo(userCreateDTO, userId);
 
         return ResponseEntity.ok("User registered successfully");
     }
+
 }
