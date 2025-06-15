@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Beans {
-
+/*
     @Value("${keycloak.adminClientId}")
     private String adminClientId;
 
@@ -33,5 +33,5 @@ public class Beans {
                 .clientId(adminClientId)
                 .clientSecret(adminClientSecret)
                 .build();
-    }
+    }*/
 }
