@@ -7,13 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class KYCSubmissionDto {
-    private String userId;
+    private UUID userId;
     private String documentType;
     private String documentNumber;
     private LocalDate issuedDate;

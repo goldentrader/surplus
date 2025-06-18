@@ -5,6 +5,8 @@ import com.example.user_management.dto.UserResponseDTO;
 import com.example.user_management.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class UserMapper {
 
@@ -37,7 +39,7 @@ public class UserMapper {
         if (user == null) return null;
 
         UserResponseDTO dto = new UserResponseDTO();
-        dto.setId(user.getId());
+        dto.setId(UUID.fromString(user.getId()));
         dto.setFirstname(user.getFirstname());
         dto.setLastname(user.getLastname());
         dto.setEmail(user.getEmail());
@@ -52,4 +54,5 @@ public class UserMapper {
 
         return dto;
     }
+
 }

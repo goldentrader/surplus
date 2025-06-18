@@ -4,10 +4,11 @@ import com.example.user_management.enums.Role;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class UserCreateDTO {
-    private String id;  // lowercase 'id'
+    private UUID id;  // lowercase 'id'
     private String firstname;
     private String lastname;
     private String username;

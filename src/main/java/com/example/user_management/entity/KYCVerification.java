@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class KYCVerification {
     @Id
     private String id;
 
-    private String userId;
+    private UUID userId;
     private String documentType;
     private String documentNumber;
     private LocalDate issuedDate;

@@ -34,6 +34,8 @@ public class KeycloakService {
         user.setLastName(userDTO.getLastname());
         user.setCredentials(Collections.singletonList(credentials));
         user.setEnabled(true);
+        user.setEmailVerified(true);
+
 
         // Create the user
         UsersResource usersResource = keycloak.realm(realm).users();
